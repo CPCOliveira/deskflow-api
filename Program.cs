@@ -18,6 +18,10 @@ builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 
+builder.Services.AddScoped<IChamadoRepository, ChamadoRepository>();
+
+builder.Services.AddScoped<IChamadoService, ChamadoService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
