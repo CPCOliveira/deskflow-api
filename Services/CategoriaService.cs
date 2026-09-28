@@ -6,10 +6,12 @@ namespace DeskFlow.API.Services;
 public class CategoriaService : ICategoriaService
 {
     private readonly ICategoriaRepository _repository;
+    private readonly IChamadoRepository _chamadoRepository;
 
-    public CategoriaService(ICategoriaRepository repository)
+    public CategoriaService(ICategoriaRepository repository, IChamadoRepository chamadoRepository)
     {
         _repository = repository;
+        _chamadoRepository = chamadoRepository;
     }
 
     public Categoria Cadastrar(string nome)
@@ -42,19 +44,20 @@ public class CategoriaService : ICategoriaService
         return true;
     }
 
-    public bool Deletar(int id)
+    public ResultadoExclusaoCategoria Deletar(int id)
     {
         var categoria = _repository.BuscarPorId(id);
         if (categoria == null)
         {
-            return false;
+            return ResultadoExclusaoCategoria.CategoriaNaoLocalizada;
         }
 
-        // TODO: quando a entidade Chamado existir, validar aqui (RF04)
-        // se essa Categoria possui Chamados vinculados antes de deletar.
-        // Por enquanto, deleta direto.
+        if (_chamadoRepository.CategoriaPossuiChamado(id))
+        {
+            return ResultadoExclusaoCategoria.CategoriaPossuiChamados;
+        }
 
         _repository.Deletar(categoria);
-        return true;
+        return ResultadoExclusaoCategoria.DeletadoComSucesso;
     }
 }

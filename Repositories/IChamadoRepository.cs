@@ -8,4 +8,5 @@ public interface IChamadoRepository
     Chamado? BuscarPorId(int id);
     List<Chamado> ListarTodos();
     void Atualizar(Chamado chamado);
+    bool CategoriaPossuiChamado(int categoriaId);
 }

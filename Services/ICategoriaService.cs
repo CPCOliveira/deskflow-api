@@ -8,6 +8,6 @@ public interface ICategoriaService
     List<Categoria> ListarTodas();
     Categoria? BuscarPorId(int id);
     bool AtualizarNome(int id, string nome);
-    bool Deletar(int id);
+    ResultadoExclusaoCategoria Deletar(int id);
 
 }

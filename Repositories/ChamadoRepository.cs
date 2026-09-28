@@ -37,4 +37,9 @@ public class ChamadoRepository : IChamadoRepository
         _context.SaveChanges();
     }
 
+    public bool CategoriaPossuiChamado(int categoriaId)
+    {
+        return _context.Chamados.Any(c => c.CategoriaId == categoriaId);
+    }
+
 }

@@ -57,14 +57,16 @@ public class CategoriaController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-
     public IActionResult Deletar(int id)
     {
-        var sucesso = _categoriaService.Deletar(id);
-        if (!sucesso)
+        var resultado = _categoriaService.Deletar(id);
+
+        return resultado switch
         {
-            return NotFound();
-        }
-        return NoContent();
+            ResultadoExclusaoCategoria.DeletadoComSucesso => NoContent(),
+            ResultadoExclusaoCategoria.CategoriaNaoLocalizada => NotFound(),
+            ResultadoExclusaoCategoria.CategoriaPossuiChamados => BadRequest("Não é possível excluir esta categoria: existem chamados vinculados a ela."),
+            _ => BadRequest()
+        };
     }
 }
