@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using DeskFlow.API.Models.Entities;
 using DeskFlow.API.Models.Requests;
 using DeskFlow.API.Services;
 
@@ -23,9 +24,9 @@ public class ChamadoController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult ListarTodos()
+    public IActionResult ListarTodos([FromQuery] StatusChamado? status, [FromQuery] Prioridade? prioridade, [FromQuery] int? categoriaId)
     {
-        var chamados = _chamadoService.ListarTodos();
+        var chamados = _chamadoService.ListarTodos(status, prioridade, categoriaId);
         return Ok(chamados);
     }
 
