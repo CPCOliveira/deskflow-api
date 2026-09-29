@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using DeskFlow.API.Data;
 using DeskFlow.API.Repositories;
 using DeskFlow.API.Services;
+using DeskFlow.API.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,8 @@ builder.Services.AddScoped<IInteracaoRepository, InteracaoRepository>();
 builder.Services.AddScoped<IInteracaoService, InteracaoService>();
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

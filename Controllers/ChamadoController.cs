@@ -20,6 +20,12 @@ public class ChamadoController : ControllerBase
     public IActionResult AbrirChamado([FromBody] ChamadoRequest request)
     {
         var chamado = _chamadoService.AbrirChamado(request);
+
+        if (chamado == null)
+        {
+            return BadRequest("A categoria informada não existe.");
+        }
+
         return CreatedAtAction(nameof(BuscarPorId), new { id = chamado.Id }, chamado);
     }
 
