@@ -24,6 +24,8 @@ public class Chamado
 
     public Categoria? Categoria { get; set; }
 
+    public List<Interacao> Interacoes { get; set; } = new List<Interacao>();
+
 
 }
 

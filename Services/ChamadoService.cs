@@ -30,9 +30,9 @@ public class ChamadoService : IChamadoService
         return chamado;
     }
 
-    public List<Chamado> ListarTodos()
+    public List<Chamado> ListarTodos(StatusChamado? status, Prioridade? prioridade, int? categoriaId)
     {
-        return _repository.ListarTodos();
+        return _repository.ListarTodos(status, prioridade, categoriaId);
     }
 
     public Chamado? BuscarPorId(int id)

@@ -7,7 +7,11 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -21,6 +25,10 @@ builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<IChamadoRepository, ChamadoRepository>();
 
 builder.Services.AddScoped<IChamadoService, ChamadoService>();
+
+builder.Services.AddScoped<IInteracaoRepository, InteracaoRepository>();
+
+builder.Services.AddScoped<IInteracaoService, InteracaoService>();
 
 var app = builder.Build();
 

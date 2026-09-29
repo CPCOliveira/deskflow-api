@@ -13,6 +13,8 @@ public class AppDbContext : DbContext
 
     public DbSet<Chamado> Chamados { get; set; }
 
+    public DbSet<Interacao> Interacoes { get; set; }
+
    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Chamado>()
@@ -20,5 +22,11 @@ public class AppDbContext : DbContext
             .WithMany(cat => cat.Chamados)
             .HasForeignKey(c => c.CategoriaId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Interacao>()
+            .HasOne(i => i.Chamado)
+            .WithMany(c => c.Interacoes)
+            .HasForeignKey(i => i.ChamadoId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

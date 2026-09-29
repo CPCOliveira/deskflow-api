@@ -21,14 +21,33 @@ public class ChamadoRepository : IChamadoRepository
 
     public Chamado? BuscarPorId(int id)
     {
-        return _context.Chamados.Find(id);
+        return _context.Chamados
+            .Include(c => c.Categoria)
+            .Include(c => c.Interacoes)
+            .FirstOrDefault(c => c.Id == id);
 
     }
 
-    public List<Chamado> ListarTodos()
+    public List<Chamado> ListarTodos(StatusChamado? status, Prioridade? prioridade, int? categoriaId)
     {
-        return _context.Chamados.ToList();
+        var query = _context.Chamados.AsQueryable();
 
+        if (status.HasValue)
+        {
+            query = query.Where(c => c.Status == status.Value);
+        }
+
+        if (prioridade.HasValue)
+        {
+            query = query.Where(c => c.Prioridade == prioridade.Value);
+        }
+
+        if (categoriaId.HasValue)
+        {
+            query = query.Where(c => c.CategoriaId == categoriaId.Value);
+        }
+
+        return query.ToList();
     }
 
     public void Atualizar(Chamado chamado)
