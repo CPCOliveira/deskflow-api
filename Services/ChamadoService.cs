@@ -7,14 +7,23 @@ namespace DeskFlow.API.Services;
 public class ChamadoService : IChamadoService
 {
     private readonly IChamadoRepository _repository;
+    private readonly ICategoriaRepository _categoriaRepository;
 
-    public ChamadoService(IChamadoRepository repository)
+    public ChamadoService(IChamadoRepository repository, ICategoriaRepository categoriaRepository)
     {
         _repository = repository;
+        _categoriaRepository = categoriaRepository;
     }
 
-    public Chamado AbrirChamado(ChamadoRequest request)
+    public Chamado? AbrirChamado(ChamadoRequest request)
     {
+        var categoria = _categoriaRepository.BuscarPorId(request.CategoriaId);
+
+        if (categoria == null)
+        {
+            return null;
+        }
+
         var chamado = new Chamado
         {
             Titulo = request.Titulo,
@@ -53,14 +62,13 @@ public class ChamadoService : IChamadoService
         {
             return ResultadoChamado.TransicaoInvalida;
         }
-    
 
         chamado.Status = StatusChamado.EmAndamento;
         _repository.Atualizar(chamado);
-        
+
         return ResultadoChamado.Validado;
     }
-    
+
     public ResultadoChamado Encerrar(int id, string solucao)
     {
         var chamado = _repository.BuscarPorId(id);
