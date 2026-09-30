@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DeskFlow.API.Models.Entities;
 using DeskFlow.API.Models.Requests;
@@ -7,6 +8,7 @@ namespace DeskFlow.API.Controllers;
 
 [ApiController]
 [Route("api/chamados")]
+[Authorize]
 public class ChamadoController : ControllerBase
 {
     private readonly IChamadoService _chamadoService;
