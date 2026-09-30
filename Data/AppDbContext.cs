@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using DeskFlow.API.Models.Entities;
 
 namespace DeskFlow.API.Data;
 
-public class AppDbContext : DbContext
+public class AppDbContext : IdentityDbContext<IdentityUser>
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
@@ -15,8 +17,10 @@ public class AppDbContext : DbContext
 
     public DbSet<Interacao> Interacoes { get; set; }
 
-   protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
         modelBuilder.Entity<Chamado>()
             .HasOne(c => c.Categoria)
             .WithMany(cat => cat.Chamados)

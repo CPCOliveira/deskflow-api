@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DeskFlow.API.Services;
 using DeskFlow.API.Models.Requests;
@@ -6,6 +7,7 @@ namespace DeskFlow.API.Controllers;
 
 [ApiController]
 [Route("api/categorias")]
+[Authorize]
 
 public class CategoriaController : ControllerBase
 {

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DeskFlow.API.Models.Requests;
 using DeskFlow.API.Services;
@@ -6,6 +7,7 @@ namespace DeskFlow.API.Controllers;
 
 [ApiController]
 [Route("api/chamados/{chamadoId}/interacoes")]
+[Authorize]
 public class InteracaoController : ControllerBase
 {
     private readonly IInteracaoService _interacaoService;
