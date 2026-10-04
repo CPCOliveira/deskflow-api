@@ -6,6 +6,7 @@ using DeskFlow.API.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,8 +18,41 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
     });
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+        document.Components.SecuritySchemes["Bearer"] = new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Description = "Informe o token JWT no formato: Bearer {seu token}"
+        };
+
+        var securityRequirement = new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = new List<string>()
+        };
+
+        foreach (var path in document.Paths.Values)
+        {
+            foreach (var operation in path.Operations.Values)
+            {
+                operation.Security ??= new List<OpenApiSecurityRequirement>();
+                operation.Security.Add(securityRequirement);
+            }
+        }
+
+        return Task.CompletedTask;
+    });
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -53,22 +87,14 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
-
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
-
 builder.Services.AddScoped<IChamadoRepository, ChamadoRepository>();
-
 builder.Services.AddScoped<IChamadoService, ChamadoService>();
-
 builder.Services.AddScoped<IInteracaoRepository, InteracaoRepository>();
-
 builder.Services.AddScoped<IInteracaoService, InteracaoService>();
-
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 var app = builder.Build();
-
-app.UseAuthentication();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
@@ -76,23 +102,16 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    
+
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/openapi/v1.json", "DeskFlow API v1");
     });
-
 }
-
-app.UseHttpsRedirection();
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
-
-app.UseAuthorization();
-
 app.MapControllers();
 
 app.Run();
