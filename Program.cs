@@ -22,6 +22,24 @@ builder.Services.AddControllers()
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi(options =>
 {
+    // Correção: o gerador de OpenAPI do .NET 10 descreve parâmetros inteiros de rota
+    // (ex: {id}) com "type": ["integer", "string"], porque na URL eles chegam como texto.
+    // O Swagger UI não entende esse tipo "duplo" e trava o "Try it out" com
+    // "Required field is not provided", mesmo com um valor digitado.
+    // Aqui simplificamos o schema de volta para "integer" puro, só para a exibição no Swagger.
+    options.AddSchemaTransformer((schema, context, cancellationToken) =>
+    {
+        if (schema.Type is JsonSchemaType type &&
+            type.HasFlag(JsonSchemaType.Integer) &&
+            type.HasFlag(JsonSchemaType.String))
+        {
+            schema.Type = JsonSchemaType.Integer;
+            schema.Pattern = null;
+        }
+
+        return Task.CompletedTask;
+    });
+
     options.AddDocumentTransformer((document, context, cancellationToken) =>
     {
         document.Components ??= new OpenApiComponents();

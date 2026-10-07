@@ -54,7 +54,7 @@ Relacionamentos:
 1. Clone o repositório:
 ```bash
 git clone https://github.com/CPCOliveira/deskflow-api.git
-cd deskflow-api/DeskFlow.API
+cd deskflow-api
 ```
 
 2. Configure a string de conexão em `appsettings.json` (ajuste `Server` para sua instância do SQL Server):
@@ -79,9 +79,55 @@ dotnet run
 http://localhost:5297/swagger
 ```
 
+## Autenticação
+
+A API usa **ASP.NET Core Identity + JWT**. Todos os endpoints abaixo, exceto os de autenticação, exigem um token válido no header `Authorization`.
+
+1. Registre um usuário:
+```http
+POST /api/auth/registrar
+Content-Type: application/json
+
+{
+  "email": "usuario@exemplo.com",
+  "senha": "SenhaForte123"
+}
+```
+
+2. Faça login para obter o token:
+```http
+POST /api/auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@exemplo.com",
+  "senha": "SenhaForte123"
+}
+```
+Resposta:
+```json
+{ "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." }
+```
+
+3. Envie o token nas próximas requisições:
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+Pelo Swagger (`/swagger`), basta clicar no botão **Authorize** no topo da página e colar o token — não precisa prefixar com `Bearer`, o Swagger faz isso automaticamente.
+
 ## Endpoints da API
 
+### Autenticação
+
+| Método | Rota | Descrição |
+|---|---|---|
+| POST | `/api/auth/registrar` | Cadastra um novo usuário |
+| POST | `/api/auth/login` | Autentica e retorna um token JWT |
+
 ### Categorias
+
+> A partir daqui, todas as rotas exigem o header `Authorization: Bearer {token}` (ver seção [Autenticação](#autenticação)).
 
 | Método | Rota | Descrição |
 |---|---|---|
